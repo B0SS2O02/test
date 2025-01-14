@@ -40,15 +40,16 @@ center_x, center_y = 320, 240  # Центральные координаты и�
 # Захват видео с камеры
 cap = cv2.VideoCapture(0)
 
-def plus():
+def size (s):
     global scale
-    print('plus')
-    scale = scale + 0.1  # Увеличиваем масштаб немного
+    if s == 'p':
+        scale = scale + 0.1
+    if s == 'm':
+        if scale - 0.1 > 1:
+            scale = scale - 0.1
+        
+    
 
-def minus():
-    global scale
-    print('minus')
-    scale = scale - 0.1  # Уменьшаем масштаб немного
 
 def move(s):
     global center_x , center_y
@@ -107,30 +108,32 @@ root.title("Face Detection")
 
 
 root.geometry(f"{window_size_x}x{window_size_y}")  # Устанавливаем размер окна
+root.config(bg="#2C3E50")  # Темный фон
 
-buttonConatiner = Frame(root)
-buttonConatiner.pack()
 
-buttonPlus = Button(buttonConatiner, text="+", command=plus)
+buttonConatiner = Frame(root,bg="#34495E")
+buttonConatiner.pack(pady=2)
+
+buttonPlus = Button(buttonConatiner, text="+", command=lambda: size('p'), font=("Helvetica", 14), width=4, height=1, bg="#16A085", fg="white", relief="flat")
 buttonPlus.grid(row=1, column=1)
 
-buttonMinus = Button(buttonConatiner, text="-", command=minus)
-buttonMinus.grid(row=1, column=2)
+buttonMinus = Button(buttonConatiner, text="-", command=lambda: size('m'), font=("Helvetica", 14), width=4, height=1, bg="#16A085", fg="white", relief="flat")
+buttonMinus.grid(row=1, column=3)
 
-buttonUp = Button(buttonConatiner, text="Up", command=lambda : move('u'))
-buttonUp.grid(row=2, column=1)
+buttonUp = Button(buttonConatiner, text="/\\", command=lambda : move('u'),font=("Helvetica", 14), width=4, height=1, bg="#16A085", fg="white", relief="flat")
+buttonUp.grid(row=1, column=2)
 
-buttonDown = Button(buttonConatiner, text="Down", command=lambda : move('d'))
+buttonDown = Button(buttonConatiner, text="\\/", command=lambda : move('d'),font=("Helvetica", 14), width=4, height=1, bg="#16A085", fg="white", relief="flat")
 buttonDown.grid(row=2, column=2)
 
-buttonLeft = Button(buttonConatiner, text="Left", command=lambda : move('l'))
-buttonLeft.grid(row=2, column=3)
+buttonLeft = Button(buttonConatiner, text="<", command=lambda : move('l'),font=("Helvetica", 14), width=4, height=1, bg="#16A085", fg="white", relief="flat")
+buttonLeft.grid(row=2, column=1)
 
-buttonRight = Button(buttonConatiner, text="Right", command=lambda: move('r'))
-buttonRight.grid(row=2, column=4)
+buttonRight = Button(buttonConatiner, text=">", command=lambda: move('r'),font=("Helvetica", 14), width=4, height=1, bg="#16A085", fg="white", relief="flat")
+buttonRight.grid(row=2, column=3)
 
-buttonQuit = Button(buttonConatiner, text="exit", command=quit)
-buttonQuit.grid(row=3, column=2)
+buttonQuit = Button(buttonConatiner,  text="Exit", command=quit, font=("Helvetica", 14), width=4, height=1, bg="#E74C3C", fg="white", relief="flat")
+buttonQuit.grid(row=1, column=4)
 
 # Создаем метку для отображения изображения
 label = Label(root)
@@ -221,14 +224,14 @@ while work:
             # )
 
             # Рисуем квадрат вокруг левого глаза
-            cv2.rectangle(frame_resized, (left_eye_bbox[0], left_eye_bbox[1]),
-                          (left_eye_bbox[0] + left_eye_bbox[2], left_eye_bbox[1] + left_eye_bbox[3]),
-                          (255, 0, 0), 2)  # Красный цвет
+            # cv2.rectangle(frame_resized, (left_eye_bbox[0], left_eye_bbox[1]),
+            #               (left_eye_bbox[0] + left_eye_bbox[2], left_eye_bbox[1] + left_eye_bbox[3]),
+            #               (255, 0, 0), 2)  # Красный цвет
 
             # Рисуем квадрат вокруг правого глаза
-            cv2.rectangle(frame_resized, (right_eye_bbox[0], right_eye_bbox[1]),
-                          (right_eye_bbox[0] + right_eye_bbox[2], right_eye_bbox[1] + right_eye_bbox[3]),
-                          (255, 0, 0), 2)  # Красный цвет
+            # cv2.rectangle(frame_resized, (right_eye_bbox[0], right_eye_bbox[1]),
+            #               (right_eye_bbox[0] + right_eye_bbox[2], right_eye_bbox[1] + right_eye_bbox[3]),
+            #               (255, 0, 0), 2)  # Красный цвет
 
             # Вычисление EAR
             leftEAR = eye_aspect_ratio(left_eye_points)
@@ -242,7 +245,7 @@ while work:
                     sound.play()
                     face_color = (0, 0, 255)  # Красный, если глаза закрыты
                     # Вывод текста "Закрыты" на кадре
-                    cv2.putText(frame_resized, "Закрыты", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+                    cv2.putText(frame_resized, "-- Alert --", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             else:
                 COUNTER = 0
             
